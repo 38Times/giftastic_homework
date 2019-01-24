@@ -83,7 +83,7 @@
         
         $gifHolder.empty();
         
-        $.getJSON("http://api.giphy.com/v1/gifs/search?q="+btnVal+"&api_key=LmhBV8XBEx2SUhak4IZ2nq5hF4XXxAxx&limit=10")
+        $.getJSON("https://api.giphy.com/v1/gifs/search?q="+btnVal+"&api_key=LmhBV8XBEx2SUhak4IZ2nq5hF4XXxAxx&limit=10")
             .done(function(response){
             
             var responseData = response.data,
