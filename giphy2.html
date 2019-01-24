@@ -1,0 +1,166 @@
+<!doctype html>
+<html>
+<head>
+<meta charset="utf-8">
+<title>Giphy Thing</title>
+<style>
+    
+    *{ box-sizing:border-box; }
+    img{ width:100%; height:auto; }
+    
+    body{ margin:0; }
+    
+    .button-holder{padding:16px;}
+    .gif-btn{ margin:10px; }
+    
+    .col{
+        
+        display:inline-block;
+        float:left;
+        padding:5px;
+        
+    }
+    
+    .gif-column{ width:75%; }
+    .search-column{ width:25%; }
+    
+    .gif{
+        
+        width:25%;
+        display:inline-block;
+        float:left;
+        padding:8px;
+        cursor:pointer;
+        
+    }
+    
+    .clearfix:after {
+      content: "";
+      clear: both;
+      display: table;
+    }
+
+</style>
+</head>
+
+<body>
+    
+    <div class="button-holder"></div>
+    
+<div class="gif-column col"></div>
+        <div class="search-column col">
+        
+            <form>
+            
+                <h2>Make Your Own Button</h2>
+                <input type="text">
+                <button class="submit-btn">submit</button>
+            
+            </form>
+        
+        </div>
+	
+	
+<script
+  src="https://code.jquery.com/jquery-3.3.1.min.js"
+  integrity="sha256-FgpCb/KJQlLNfOu91ta32o/NMZxltwRo8QtmkMRdAu8="
+  crossorigin="anonymous"></script>
+    
+<script>
+    
+    var $btnHolder = $(".button-holder"),
+        $gifHolder = $(".gif-column"),
+        $gifBtn,
+        $gifImg,
+        $theForm = $(".search-column form"),
+        $theInput = $(".search-column form input"),
+        $submitBtn = $(".submit-btn");
+    
+    var topics = ['ford', 'volksagen', 'audi', 'peugeot', 'Pagani', 'Lamborghini', 'land rover', 'bmw', 'bugatti chiron'],
+        btnVal = topics[0];
+    
+    function makeGifs(){
+        
+        $gifHolder.empty();
+        
+        $.getJSON("http://api.giphy.com/v1/gifs/search?q="+btnVal+"&api_key=LmhBV8XBEx2SUhak4IZ2nq5hF4XXxAxx&limit=25")
+            .done(function(response){
+            
+            var responseData = response.data,
+                alts = [],
+                animated = [],
+                stills = [];
+            
+            for(i = 0; i < responseData.length; i++){
+                
+                alts.push(response.data[i].title);
+                animated.push(response.data[i].images.downsized_large.url);
+                stills.push(response.data[i].images.downsized_still.url);
+                
+                $gifHolder.append('<div class="gif"><img src="'+stills[i]+'" alt="'+alts[i]+'" data-animated="'+animated[i]+'" /></div>');
+                
+            };
+            
+            $gifImg = $(".gif img");
+            
+            var theStill,
+                theAnimated;
+            
+            $gifImg.hover(function(){
+                
+                theStill = $(this).attr('src');
+                theAnimated = $(this).attr('data-animated');
+                
+                $(this).attr('src', theAnimated);
+            
+            }, function(){
+                
+                $(this).attr('src', theStill).attr('data-animated', theAnimated);
+                
+            });
+            
+        });
+        
+    }
+    
+    function makeBtns(){
+        
+        for(i = 0; i < topics.length; i++){
+            
+            $btnHolder.append('<button class="gif-btn">'+topics[i]+'</button>');
+
+        }
+        
+        $gifBtn = $(".gif-btn");
+        $gifBtn.on('click', function(){
+
+            btnVal = $(this).text().toLowerCase().replace(/\s/g, '+');
+            makeGifs();
+        
+        });
+        
+        makeGifs();
+        
+    }
+    
+    function makeNewBtn(event){
+        
+        event.preventDefault();
+        var inVal = $theInput.val();
+        $btnHolder.empty();
+        topics.push(""+inVal+"");
+        makeBtns();
+        
+    }
+
+    $(document).ready(function(){
+        
+        makeBtns();
+        $submitBtn.on('click', makeNewBtn);
+        
+    });
+    
+</script>
+    
+</body>
+</html>
